@@ -1,0 +1,81 @@
+<!-- <encoder class="ch.qos.logback.core.encoder.LayoutWrappingEncoder"> -->
+
+<configuration>
+
+    <property name="ROOT_LOG" value="rootloger"/>
+    <property name="PROGRESS_LOG" value="progresslogger"/>
+    <property name="ERROR_LOG" value="errorlogger"/>
+
+    <appender name="ROOT-LOGGER" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>logs/${ROOT_LOG}.log</file>
+        <append>true</append>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>logs/archived/${ROOT_LOG}_%d{yyyy-MM-dd}.%i.log.gz</fileNamePattern>
+            <!-- each archived file, size max 10MB -->
+            <maxFileSize>10MB</maxFileSize>
+            <!-- total size of all archive files, if total size > 2GB, it will delete old archived files -->
+            <totalSizeCap>2GB</totalSizeCap>
+            <!-- 60 days to keep -->
+            <maxHistory>60</maxHistory>
+        </rollingPolicy>
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>INFO</level>
+        </filter>
+        <encoder>
+            <pattern>%d %p %c{1.} [%t] %m%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="PROGRESS-LOGGER" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>logs/${PROGRESS_LOG}.log</file>
+        <append>true</append>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>logs/archived/${PROGRESS_LOG}_%d{yyyy-MM-dd}.%i.log.gz</fileNamePattern>
+            <!-- each archived file, size max 10MB -->
+            <maxFileSize>10MB</maxFileSize>
+            <!-- total size of all archive files, if total size > 2GB, it will delete old archived files -->
+            <totalSizeCap>2GB</totalSizeCap>
+            <!-- 60 days to keep -->
+            <maxHistory>60</maxHistory>
+        </rollingPolicy>
+        <filter class="ch.qos.logback.core.filter.EvaluatorFilter">
+            <evaluator>
+                <expression>
+                    marker != null &amp;&amp; marker.contains("PROGRESS")
+                </expression>
+            </evaluator>
+            <OnMismatch>DENY</OnMismatch>
+            <OnMatch>ACCEPT</OnMatch>
+        </filter>
+        <encoder>
+            <pattern>%d %p %c{1.} [%t] %m%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="ERROR-LOGGER" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>logs/${ERROR_LOG}.log</file>
+        <append>true</append>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>logs/archived/${ERROR_LOG}_%d{yyyy-MM-dd}.%i.log.gz</fileNamePattern>
+            <!-- each archived file, size max 10MB -->
+            <maxFileSize>10MB</maxFileSize>
+            <!-- total size of all archive files, if total size > 2GB, it will delete old archived files -->
+            <totalSizeCap>2GB</totalSizeCap>
+            <!-- 60 days to keep -->
+            <maxHistory>60</maxHistory>
+        </rollingPolicy>
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>ERROR</level>
+        </filter>
+        <encoder>
+            <pattern>%d %p %c{1.} [%t] %m%n</pattern>
+        </encoder>
+    </appender>
+
+    <root level="INFO">
+        <appender-ref ref="ROOT-LOGGER"/>
+        <appender-ref ref="PROGRESS-LOGGER"/>
+        <appender-ref ref="ERROR-LOGGER"/>
+    </root>
+
+</configuration>
